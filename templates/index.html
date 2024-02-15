@@ -1,0 +1,116 @@
+<html>
+  <head>
+    <title>Smart Poultry</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&amp;display=swap" rel="stylesheet">
+    <style>
+      body {
+        font-family: 'Poppins', sans-serif;
+      }
+      
+      .contents {
+        width: 100%;
+      }
+
+      .bg_img {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index:1;
+        width: 100vw;
+      }
+
+      .partition1 {
+        position: absolute;
+        left: 50%;
+        top: 25%;
+        transform: translate(-50%, -25%);
+        z-index: 99;
+        height: 50vh;
+        display: flex;
+        width: 100%;
+      }
+      
+      .data_box {
+        background-color: #fff;
+        height: 200px;
+        width: 500px;
+        margin: 0 auto;
+        border-radius: 20px;
+      }
+
+      .main_data {
+        height: 70%;
+        font-size: 85px;
+        text-align: center;
+
+      }
+
+      .data {
+        height: 30%;
+        text-align: center;
+        font-size: 35px;
+      }
+
+      .partition2 {
+        z-index: 99;
+        display: flex;
+        margin: auto;
+        width: 100%;
+        position: absolute;
+        left: 50%;
+        top: 75%;
+        transform: translate(-50%, -75%);
+      }
+
+      .graph {
+        flex: .35;
+      }
+
+    </style>
+  </head>
+  <body>
+    <div class="contents">
+      <img src="../static/bg.jpg" alt="" class="bg_img">
+      <div class="partition1">
+        <div class="data_box">
+          <div class="main_data">
+            <span class="data1" id="data1">35</span>
+            <span class="data2"> °C</span>
+          </div>
+          <div class="data">Temperature</div>
+        </div>
+        <div class="data_box">
+          <div class="main_data">
+            <span class="data1" id="data1">35</span>
+            <span class="data2"> °C</span>
+          </div>
+          <div class="data">Humidity</div>
+
+        </div>
+        <div class="data_box">
+          <div class="main_data">
+            <span class="data1" id="data1">35</span>
+            <span class="data2"> PPM</span>
+          </div>
+          <div class="data">NH3 (Ammonia)</div>
+
+        </div>
+      </div>
+      <div class="partition2">
+
+        <div class="graph">
+          {{ graph_html_1|safe }}
+        </div>
+
+        <div class="graph">
+          {{ graph_html_2|safe }}
+        </div>
+
+        <div class="graph">
+          {{ graph_html_3|safe }}
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

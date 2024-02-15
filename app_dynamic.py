@@ -86,16 +86,19 @@ def home():
     global y_values_1
     global y_values_2
     global y_values_3
+    current_temp = ""
+    current_humd = ""
+    current_ammo = ""
+
     with app.app_context():
         datas = MyData.query.all()
         for data in datas:
             y_values_1.append(int(data.temperature))
+            current_temp = data.temperature
             y_values_2.append(int(data.humidity))
+            current_humd = data.humidity
             y_values_3.append(int(data.ppm))
-
-    print(y_values_1)
-    print(y_values_2)
-    print(y_values_3)
+            current_ammo = data.ppm
 
     graph_1 = go.Scatter(x=x_values, y=y_values_1, mode='lines+markers')
     graph_2 = go.Scatter(x=x_values, y=y_values_2, mode='lines+markers')
@@ -112,7 +115,16 @@ def home():
     graph_html_1 = figure_1.to_html(full_html=False)
     graph_html_2 = figure_2.to_html(full_html=False)
     graph_html_3 = figure_3.to_html(full_html=False)
-    return render_template("index.html", graph_html_1=graph_html_1, graph_html_2=graph_html_2, graph_html_3=graph_html_3)
+
+    template_data = {
+        "current_temp": current_temp,
+        "current_humd": current_humd,
+        "current_ammo": current_ammo,
+        "graph_html_1": graph_html_1, 
+        "graph_html_2": graph_html_2,
+        "graph_html_3": graph_html_3
+    }
+    return render_template("index.html", **template_data)
 
 if __name__ == "__main__":
     # threading.Thread(target=serial_thread).start()

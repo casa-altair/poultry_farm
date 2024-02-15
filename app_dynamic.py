@@ -1,10 +1,10 @@
+import time
 from flask import render_template, Flask
 import serial
 import threading
 from flask_sqlalchemy import SQLAlchemy
 import plotly.graph_objs as go
 import numpy as np
-import random
 
 
 
@@ -13,13 +13,16 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///models.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 x_values = np.arange(1, 25)
+y_values_1 = []
+y_values_2 = []
+y_values_3 = []
 
 
 COM_PORT = '/dev/ttyUSB0'
 
 class MyData(db.Model):
     """ Defining USer DB Class """
-    __tablename__ = "My Users"
+    __tablename__ = "My Query Datas"
     id = db.Column(db.Integer, primary_key=True)
     temperature = db.Column(db.String(20))
     humidity = db.Column(db.String(20))
@@ -57,15 +60,16 @@ def manage_data(serial_data):
     except Exception as error:
         print(f"Saving Error: {error}")
 
-# Pause the program for 1 second to avoid overworking the serial port
 def serial_thread():
     """ Read Serial Data received from Arduino """
     ser = serial_com()
     while 1:
+        time.sleep(.1)
         try:
             # Start reading data using newline
             x=ser.readline()
             print(x)
+            manage_data(x)
         except Exception:
             # If error when capturing, then close and reconnect serial
             try:
@@ -79,9 +83,19 @@ def serial_thread():
 @app.route("/")
 def home():
     """ render home page """
-    y_values_1 = np.random.randint(26, 45, size=24)
-    y_values_2 = np.random.randint(40, 60, size=24)
-    y_values_3 = np.random.randint(1000, 2000, size=24)
+    global y_values_1
+    global y_values_2
+    global y_values_3
+    with app.app_context():
+        datas = MyData.query.all()
+        for data in datas:
+            y_values_1.append(int(data.temperature))
+            y_values_2.append(int(data.humidity))
+            y_values_3.append(int(data.ppm))
+
+    print(y_values_1)
+    print(y_values_2)
+    print(y_values_3)
 
     graph_1 = go.Scatter(x=x_values, y=y_values_1, mode='lines+markers')
     graph_2 = go.Scatter(x=x_values, y=y_values_2, mode='lines+markers')
@@ -105,14 +119,4 @@ if __name__ == "__main__":
 
     with app.app_context():
         db.create_all()
-        for _ in range(0, 12):
-            db.session.add(
-                MyData (
-                    temperature = str(random.randint(28, 35)),
-                    humidity = str(random.randint(40, 45)),
-                    ppm = str(random.randint(100, 125))
-                )
-            )
-            db.session.commit()
-
-    app.run(host = "0.0.0.0", port=8080, debug=True)
+    app.run(host = "0.0.0.0", port=8080, debug=False)

@@ -104,9 +104,17 @@ def home():
     graph_2 = go.Scatter(x=x_values, y=y_values_2, mode='lines+markers')
     graph_3 = go.Scatter(x=x_values, y=y_values_3, mode='lines+markers')
 
-    layout_1 = go.Layout(title='Temperature', xaxis=dict(title='Hour'), yaxis=dict(title='Temperature'))
+    layout_1 = go.Layout(
+        title='Temperature',
+        xaxis=dict(title='Hour'),
+        yaxis=dict(title='Temperature')
+    )
     layout_2 = go.Layout(title='Humidity', xaxis=dict(title='Hour'), yaxis=dict(title='Humidity'))
-    layout_3 = go.Layout(title='Ammonia Particles', xaxis=dict(title='Hour'), yaxis=dict(title='PPM'))
+    layout_3 = go.Layout(
+        title='Ammonia Particles',
+        xaxis=dict(title='Hour'),
+        yaxis=dict(title='PPM')
+    )
 
     figure_1 = go.Figure(data=[graph_1], layout=layout_1)
     figure_2 = go.Figure(data=[graph_2], layout=layout_2)
@@ -126,9 +134,13 @@ def home():
     }
     return render_template("index.html", **template_data)
 
+@app.route("/stream")
+def stream():
+    return render_template("cam_view.html")
+
 if __name__ == "__main__":
     # threading.Thread(target=serial_thread).start()
 
     with app.app_context():
         db.create_all()
-    app.run(host = "0.0.0.0", port=8080, debug=False)
+    app.run(host = "0.0.0.0", port=8080, debug=True)

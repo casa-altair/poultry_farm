@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&amp;display=swap" rel="stylesheet">
+    <title>Camera Streaming</title>
+    <style>
+        * {
+        margin: 0;
+        box-sizing: border-box;
+        text-decoration: none;
+        font-family: 'Poppins', sans-serif;
+      }
+      nav{
+        position: absolute;
+        z-index: 100000;
+        width: 100%;
+        display: flex;
+        background-color: #fff;
+        height: 5vh;
+      }
+      .nav_holder_left {
+        flex: .7;
+      }
+      .nav_holder_right{
+        flex: .3;
+        display: flex;
+      }
+      .link {
+        flex: .4;
+        padding-top: 1.1vh;
+      }
+      a {
+        color: #000;
+      }
+        .videoElement {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60vw;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav_holder_left"></div>
+        <div class="nav_holder_right">
+          <div class="link"><a href="/" class="nav_icons">Poultry Status</a></div>
+          <div class="link"><a href="/stream" class="nav_icons">Live Streaming</a></div>
+        </div>
+      </nav>
+    <h1>Camera Streaming</h1>
+    <video id="videoElement" class="videoElement" autoplay></video>
+    
+    <script>
+        // Check if getUserMedia is available
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            // Access the camera and stream video
+            async function startVideoStream() {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                    const videoElement = document.getElementById('videoElement');
+                    videoElement.srcObject = stream;
+                } catch (error) {
+                    console.error('Error accessing the camera:', error);
+                }
+            }
+
+            // Start streaming when the page loads
+            window.onload = function() {
+                startVideoStream();
+            };
+        } else {
+            // Provide an error message or fallback if getUserMedia is not available
+            console.error('getUserMedia is not supported in this browser.');
+        }
+    </script>
+</body>
+</html>

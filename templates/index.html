@@ -3,12 +3,19 @@
     <title>Smart Poultry</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins&amp;display=swap" rel="stylesheet">
     <style>
+      * {
+        margin: 0;
+        box-sizing: border-box;
+        text-decoration: none;
+      }
       body {
         font-family: 'Poppins', sans-serif;
+        height: 90vh;
+        background-color: #000;
       }
       
       .contents {
-        width: 100%;
+        width: 100vw;
       }
 
       .bg_img {
@@ -18,6 +25,7 @@
         transform: translate(-50%, -50%);
         z-index:1;
         width: 100vw;
+        background-size: cover;
       }
 
       .partition1 {
@@ -53,10 +61,8 @@
       }
 
       .partition2 {
-        z-index: 99;
-        display: flex;
-        margin: auto;
         width: 100%;
+        z-index: 99;
         position: absolute;
         left: 50%;
         top: 75%;
@@ -64,31 +70,64 @@
       }
 
       .graph {
-        flex: .35;
+        width: 100%;
+        display: none;
+      }
+
+      nav{
+        position: absolute;
+        z-index: 100000;
+        width: 100%;
+        display: flex;
+        background-color: #fff;
+        height: 5vh;
+      }
+      .nav_holder_left {
+        flex: .7;
+      }
+      .nav_holder_right{
+        flex: .3;
+        display: flex;
+      }
+      .link {
+        flex: .4;
+        padding-top: 1.1vh;
+      }
+      a {
+        color: #000;
       }
 
     </style>
   </head>
   <body>
+    <nav>
+      <div class="nav_holder_left"></div>
+      <div class="nav_holder_right">
+        <div class="link"><a href="/" class="nav_icons">Poultry Status</a></div>
+        <div class="link"><a href="/stream" class="nav_icons">Live Streaming</a></div>
+      </div>
+    </nav>
     <div class="contents">
       <img src="../static/bg.jpg" alt="" class="bg_img">
       <div class="partition1">
-        <div class="data_box">
+
+        <div class="data_box" onclick="show_graph('t_g')">
           <div class="main_data">
             <span class="data1" id="data1">{{current_temp}}</span>
             <span class="data2"> °C</span>
           </div>
           <div class="data">Temperature</div>
         </div>
-        <div class="data_box">
+
+        <div class="data_box" onclick="show_graph('t_h')">
           <div class="main_data">
             <span class="data1" id="data1">{{current_humd}}</span>
             <span class="data2"> %</span>
           </div>
           <div class="data">Humidity</div>
-
         </div>
-        <div class="data_box">
+
+        <div class="data_box" onclick="show_graph('t_a')">
           <div class="main_data">
             <span class="data1" id="data1">{{current_ammo}}</span>
             <span class="data2"> PPM</span>
@@ -97,20 +136,44 @@
 
         </div>
       </div>
+      
       <div class="partition2">
 
-        <div class="graph">
+        <div class="graph" id="t_g">
           {{ graph_html_1|safe }}
         </div>
 
-        <div class="graph">
+        <div class="graph" id="t_h">
           {{ graph_html_2|safe }}
         </div>
 
-        <div class="graph">
+        <div class="graph" id="t_a">
           {{ graph_html_3|safe }}
         </div>
       </div>
     </div>
+    <script>
+      function show_graph(graph_type) {
+
+        if (graph_type == "t_g") {
+          document.getElementById("t_g").style.display= "block";
+          document.getElementById("t_g").style.width= "100vw";
+          document.getElementById("t_h").style.display= "none";
+          document.getElementById("t_a").style.display= "none";
+        }
+
+        if (graph_type == "t_h") {
+          document.getElementById("t_g").style.display= "none";
+          document.getElementById("t_h").style.display= "block";
+          document.getElementById("t_a").style.display= "none";
+        }
+
+        if (graph_type == "t_a") {
+          document.getElementById("t_g").style.display= "none";
+          document.getElementById("t_h").style.display= "none";
+          document.getElementById("t_a").style.display= "block";
+        }
+      }
+    </script>
   </body>
 </html>

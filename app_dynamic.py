@@ -1,9 +1,9 @@
+""" Main app """
 import time
 from flask import render_template, Flask
 import serial
 import threading
 from flask_sqlalchemy import SQLAlchemy
-import plotly.graph_objs as go
 import numpy as np
 
 
@@ -12,7 +12,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///models.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
-x_values = np.arange(1, 25)
+x_values = [1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
 y_values_1 = []
 y_values_2 = []
 y_values_3 = []
@@ -86,6 +86,9 @@ def home():
     global y_values_1
     global y_values_2
     global y_values_3
+    y_values_1 = []
+    y_values_2 = []
+    y_values_3 = []
     current_temp = ""
     current_humd = ""
     current_ammo = ""
@@ -99,40 +102,43 @@ def home():
             current_humd = data.humidity
             y_values_3.append(int(data.ppm))
             current_ammo = data.ppm
-
-    graph_1 = go.Scatter(x=x_values, y=y_values_1, mode='lines+markers')
-    graph_2 = go.Scatter(x=x_values, y=y_values_2, mode='lines+markers')
-    graph_3 = go.Scatter(x=x_values, y=y_values_3, mode='lines+markers')
-
-    layout_1 = go.Layout(
-        title='Temperature',
-        xaxis=dict(title='Hour'),
-        yaxis=dict(title='Temperature')
-    )
-    layout_2 = go.Layout(title='Humidity', xaxis=dict(title='Hour'), yaxis=dict(title='Humidity'))
-    layout_3 = go.Layout(
-        title='Ammonia Particles',
-        xaxis=dict(title='Hour'),
-        yaxis=dict(title='PPM')
-    )
-
-    figure_1 = go.Figure(data=[graph_1], layout=layout_1)
-    figure_2 = go.Figure(data=[graph_2], layout=layout_2)
-    figure_3 = go.Figure(data=[graph_3], layout=layout_3)
-
-    graph_html_1 = figure_1.to_html(full_html=False)
-    graph_html_2 = figure_2.to_html(full_html=False)
-    graph_html_3 = figure_3.to_html(full_html=False)
-
-    template_data = {
-        "current_temp": current_temp,
-        "current_humd": current_humd,
-        "current_ammo": current_ammo,
-        "graph_html_1": graph_html_1, 
-        "graph_html_2": graph_html_2,
-        "graph_html_3": graph_html_3
+    temp = {
+        'labels': x_values,
+        'values': y_values_1,
+        'x_title': 'Hours',
+        'y_title': 'Temperature (in C)'
     }
-    return render_template("index.html", **template_data)
+    humd = {
+        'labels': x_values,
+        'values': y_values_2,
+        'x_title': 'Hours',
+        'y_title': 'Humidity'
+    }
+    ppm = {
+        'labels': x_values,
+        'values': y_values_3,
+        'x_title': 'Hours',
+        'y_title': 'PPM'
+    }
+    print(current_temp)
+    print(current_humd)
+    print(current_ammo)
+    print(temp)
+    print()
+    print(humd)
+    print()
+    print(ppm)
+    print()
+
+    return render_template(
+        "index.html",
+        current_temp=current_temp,
+        current_humd=current_humd,
+        current_ammo=current_ammo,
+        graph_html_1=temp,
+        graph_html_2=humd,
+        graph_html_3=ppm
+    )
 
 @app.route("/stream")
 def stream():
@@ -143,4 +149,4 @@ if __name__ == "__main__":
 
     with app.app_context():
         db.create_all()
-    app.run(host = "0.0.0.0", port=8080, debug=True)
+    app.run(port=8080, debug=True)
